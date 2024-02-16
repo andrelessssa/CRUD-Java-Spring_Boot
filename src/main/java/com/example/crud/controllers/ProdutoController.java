@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,6 +51,21 @@ public class ProdutoController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(produto0.get());
     }
+    // Método para atualizar um produto
+    @PutMapping("/produtos/{id}")
+    public ResponseEntity<Object> atualizarProduto(@PathVariable (value = "id") UUID id,
+    @Valid @RequestBody ProdutoRecordDto produtoRecordDto){
+        Optional<ProdutoModel> porduto0 = produtosRepository.findById(id);
+        if(porduto0.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!!");
+        }
+        var produtoModel = porduto0.get();
+        BeanUtils.copyProperties(produtoRecordDto, produtoModel);
+        return ResponseEntity.status(HttpStatus.OK).body(produtosRepository.save(produtoModel));
+
+    }
+    
+
 
 
 
